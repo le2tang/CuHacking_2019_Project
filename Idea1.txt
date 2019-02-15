@@ -1,0 +1,40 @@
+/*
+Beat Detection Algorithm
+
+It is reasonable to believe that the lowest BPM that needs to be calculated is 60 Bpm (1 Hz)
+The lowest frequency needed for this application is 70 Bpm
+Generally, if the Bpm is any lower, it is more useful to count the beats of the next logical note length (quarter note -> eigth note)
+We can assume that at least two beats will occur within a time period of 3s at 60 Bpm, 2.58s at 70Bpm
+For the purposes of this algorthm, the lowest beat frequency is 70 Bpm
+
+#define MIN_FREQUENCY 70
+
+If we are sampling at an industry standard 44.1KHz, we need a buffer of length 113400, which is 453.6KB of data
+Using a window size of 1024, we can reduce dimensionality to 43 elements for each second of sound, this is 172B of data
+This is a decimating low pass filter
+If we want to use a pingpong buffer, the memory size of the input buffers doubles to 344
+
+1. Detect note onsets
+	Detect the energy of each frequency using a short time Fourier Transform
+2. Apply logarithmic compression
+	Adjusts dynamic range of frequency signal to enhance weaker spectral components
+	Accounts for logarithmic sensation of sound intensity
+3. Compute discrete derivative for each frequency band
+	Only positive increases are considered
+4. Sum up positive differences for each time band
+5. Compute local average, subtract from original curve, this gives the novelty curve
+6. Compute windowed sinusoid correlated to a a frame of the novelty curve (local periodicity kernel)
+7. Accumulate (sum) all maximizing kernels over time to obtain a single curve
+8. Apply half wave rectification to give Predominant Local Pulse curve
+
+Features:
+Tempo display
+Tempo changing display
+Lock mode
+Auto-gain
+Tuner
+Smartphone app integration
+BT headphone microphone
+
+#define Hz(tempoBpm) (tempoBpm/60)
+#define Bpm(tempoHz) (tempoHz*60)
