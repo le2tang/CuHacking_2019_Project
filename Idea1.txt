@@ -20,6 +20,8 @@ If we want to use a pingpong buffer, the memory size of the input buffers double
 	Adjusts dynamic range of frequency signal to enhance weaker spectral components
 	Accounts for logarithmic sensation of sound intensity
 3. Compute discrete derivative for each frequency band
+	From this point on, it is possible to only consider frequencies around 60Hz, 500Hz or
+		other predominant drum 	frequencies
 	Only positive increases are considered
 4. Sum up positive differences for each time band
 5. Compute local average, subtract from original curve, this gives the novelty curve
@@ -38,3 +40,15 @@ BT headphone microphone
 
 #define Hz(tempoBpm) (tempoBpm/60)
 #define Bpm(tempoHz) (tempoHz*60)
+
+#define MAX_TEMPO 140
+#define MIN_TEMPO 60
+
+#define MIN_BEAT_PERIOD 1/MAX_TEMPO
+#define MAX_BEAT_PERIOD 1/MIN_TEMPO
+
+// Industry standard
+#define SAMPLE_RATE 44100
+#define SAMPLE_PERIOD 1/SAMPLE_RATE
+#define NUM_BINS_WINDOW 43
+#define FREQ_RESOLUTION SAMPLE_RATE/NUM_BINS
